@@ -3,6 +3,7 @@ import {Link,useNavigate} from "react-router-dom"
 import { useState } from 'react';
 import {useDispatch,useSelector} from "react-redux";
 import {signInStart,signInSuccess,signInFailure} from "../redux/user/userSlice.js"
+import OAuth from '../components/OAuth.jsx';
 const SignIn = () => {
   const [formData, setformData] = useState({})
   const dispatch = useDispatch()
@@ -10,7 +11,6 @@ const SignIn = () => {
   const {error,loading} = useSelector((state)=>state.user)
   const handleChange = (e) =>{
     setformData({...formData, [e.target.id] : e.target.value})
-    console.log(formData)
   }
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -26,15 +26,15 @@ const handleSubmit = async (e) => {
     });
     
     const data = await response.json(); 
-     dispatch(signInSuccess(data))
+     
     if (data.success === true) { 
+      dispatch(signInSuccess(data))
       navigate('/')
     } else {
-      throw new Error(data.message || "Signup failed");
+      dispatch(signInFailure(data.message || "Sign in failed"))
     }
-    dispatch(signInSuccess())
   } catch (error) {
-    dispatch(signInFailure(error))
+    dispatch(signInFailure(error.message || "Something went wrong"))
   }
 };
   return (
@@ -44,12 +44,17 @@ const handleSubmit = async (e) => {
         <input type="email" placeholder='Enter your Email' className='border p-3 rounded-lg' id='email' onChange={handleChange}/>
         <input type="password" placeholder='Enter your Password' className='border p-3 rounded-lg' id='password' onChange={handleChange}/>
         <button disabled={loading} className='bg-gray-700 text-white p-3 rounded-xl hover:bg-green-400'>{loading ? "Loading..." :"SIGN IN"}</button>
+        <OAuth/>
       </form>
       <div className="flex items-center justify-center">
               <p>Do Not have an account ? <Link to={'/sign-up'}>Sign Up </Link></p>
             </div>
       <div>
-         {error && <p className='text-red-700 flex justify-center'>{error}</p>}
+         {error && (
+           <p className='text-red-700 flex justify-center'>
+             {typeof error === 'string' ? error : error.message || "An error occurred"}
+           </p>
+         )}
       </div>
     </div>
   )
