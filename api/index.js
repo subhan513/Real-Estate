@@ -3,6 +3,7 @@ import mongoose  from "mongoose";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js"
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 mongoose.connect(process.env.MONGO).then(()=>{
@@ -12,7 +13,8 @@ mongoose.connect(process.env.MONGO).then(()=>{
   console.log("Failed connnect with Database",err);
 })
 const app = express();
-app.use(express.json())
+app.use(cookieParser());
+app.use(express.json({ limit: '5mb' }));
 app.use('/api/user',userRoutes)
 app.use('/api/auth',authRoutes)
 

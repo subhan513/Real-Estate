@@ -1,25 +1,205 @@
-import {useSelector} from "react-redux"
-import {useRef} from "react"
+import { useDispatch, useSelector } from "react-redux";
+import { signInSuccess, signInFailure, deleteFailure,deleteSuccess,deleteStart,SignoutFailure,SignoutStart,SignoutSuccess} from "../redux/user/userSlice.js";
+import { useRef, useState } from "react";
+
 const Profile = () => {
-  const {currentUser}  = useSelector((state)=>state.user)
+  const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef();
+  const [formData, setFormData] = useState({
+    username: currentUser.username || '',
+    email: currentUser.email || '',
+    password: '',
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setError("Image size should be less than 2MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        const base64Image = reader.result;
+        setImageFile(base64Image);
+        setFormData(prev => ({ ...prev, imagefile: base64Image }));
+      };
+
+      reader.onerror = () => {
+        setError("Failed to read image file");
+      };
+    }
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault(); 
+    
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+
+      const id = currentUser._id;
+      
+      const updateData = { ...formData };
+      if (!updateData.password.trim()) {
+        delete updateData.password;
+      }
+
+      const ProfileApiResponse = await fetch(`/api/user/update/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(updateData)
+      });
+
+      const response = await ProfileApiResponse.json();
+
+      if (!ProfileApiResponse.ok) {
+        throw new Error(response.message || "Update failed");
+      }
+
+      if (response.success) {
+        dispatch(signInSuccess(response.result));
+        setSuccess(true);
+        setFormData(prev => ({ ...prev, password: '' }));
+      } else {
+        throw new Error(response.message);
+      }
+
+    } catch (error) {
+      console.error("Update error:", error);
+      setError(error.message);
+      dispatch(signInFailure(error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async () =>{
+    try {
+      dispatch(deleteStart())
+      const DeleteUserApiResponse = await fetch(`/api/user/delete/${currentUser._id}`,{
+      method : "DELETE",
+      headers : {
+        "Content-Type" : "application/json"
+      }
+    })
+    dispatch(deleteSuccess(DeleteUserApiResponse.message))
+    } catch (error) {
+      dispatch(deleteFailure(error.message))
+    }
+
+  }
+  const handleSignOutClick = async () =>{
+   try {
+   dispatch(SignoutStart())
+    const Response = await fetch('/api/user/logout')
+     const data = await Response.json();
+     if(data.success === false){
+      dispatch(SignoutFailure(data.message))
+      return;
+     }
+     dispatch(SignoutSuccess())
+   } catch (error) {
+      dispatch(SignoutFailure(error.message))
+   }
+  }
   return (
     <div className="p-3 max-w-lg mx-auto">
-    <h1 className="text-3xl text-center font-semibold">Profile</h1>
-    <form className="flex flex-col my-7">
-      <input type="file" ref={fileRef} className="hidden"/>
-      <img  onClick={()=>fileRef.current.click()}   src={currentUser.avatar} className="h-24 w-24 rounded-full self-center" alt="" />
-      <input type="text" id="username" placeholder="username" className='p-3 border rounded my-2' />
-      <input type="email" id="email" placeholder="email" className='p-3 border rounded my-2' />
-      <input type="password" id="password" placeholder="password" className='p-3 border rounded my-2' />
-      <button className="bg-gray-900 text-white p-3 rounded">Update</button>
-    </form>
-    <div className="flex justify-between font-normal">
-      <span className="text-red-900 font-bold text-xl">Delete Account</span>
-      <span>Sign Out</span>
+      <h1 className="text-3xl text-center font-semibold my-4">Profile</h1>
+    
+      {success && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          Profile updated successfully!
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      <form className="flex flex-col my-7" onSubmit={handleUpdateProfile}>
+        <input 
+          onChange={handleImageUpload} 
+          type="file" 
+          ref={fileRef} 
+          className="hidden" 
+          accept="image/*"
+        />
+
+        <div className="relative self-center mb-4">
+          <img 
+            onClick={() => fileRef.current.click()} 
+            src={imageFile || currentUser.avatar} 
+            className="h-24 w-24 rounded-full cursor-pointer border-2 border-gray-300 hover:border-gray-500"
+            alt="Profile" 
+          />
+          <div className="absolute bottom-0 right-0 bg-gray-800 text-white rounded-full p-1 text-xs cursor-pointer">
+            Edit
+          </div>
+        </div>
+        <input 
+          type="text" 
+          id="username" 
+          placeholder="Username" 
+          value={formData.username}
+          className='p-3 border rounded my-2' 
+          onChange={handleChange}
+          required
+        />
+
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="Email" 
+          value={formData.email}
+          className='p-3 border rounded my-2' 
+          onChange={handleChange}
+          required
+        />
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="New Password (leave empty to keep current)" 
+          value={formData.password}
+          className='p-3 border rounded my-2' 
+          onChange={handleChange}
+        />
+        <button 
+          type="submit" 
+          className="bg-gray-900 text-white p-3 rounded hover:bg-gray-800 disabled:bg-gray-400"
+          disabled={loading}
+        >
+          {loading ? "Updating..." : "Update Profile"}
+        </button>
+      </form>
+
+      <div className="flex justify-between font-normal mt-6 pt-6 border-t">
+        <button className="text-red-600 hover:text-red-800 font-bold cursor-pointer" onClick={handleDeleteUser}>
+          Delete Account
+        </button>
+        <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={handleSignOutClick}>
+          Sign Out
+        </button>
+      </div>
     </div>
-    </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;
