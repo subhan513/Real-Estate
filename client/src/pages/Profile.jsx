@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom"
 import { signInSuccess, signInFailure, deleteFailure,deleteSuccess,deleteStart,SignoutFailure,SignoutStart,SignoutSuccess} from "../redux/user/userSlice.js";
 import { useRef, useState } from "react";
 
@@ -188,8 +189,10 @@ const Profile = () => {
         >
           {loading ? "Updating..." : "Update Profile"}
         </button>
+         <button>
+          <Link className="bg-green-700 p-3 flex items-center justify-center my-1 text-white rounded-lg font-semibold text-xl" to={'/create-listing'}>Create Listing</Link>
+          </button>
       </form>
-
       <div className="flex justify-between font-normal mt-6 pt-6 border-t">
         <button className="text-red-600 hover:text-red-800 font-bold cursor-pointer" onClick={handleDeleteUser}>
           Delete Account

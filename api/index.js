@@ -2,6 +2,7 @@ import express from "express";
 import mongoose  from "mongoose";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js"
+import ListingRouter from "./routes/listing.route.js"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: '5mb' }));
 app.use('/api/user',userRoutes)
 app.use('/api/auth',authRoutes)
+app.use('/api/listing',ListingRouter)
 
 app.listen(3000,()=>{
   console.log("Server is listening on the port 3000");
