@@ -1,6 +1,70 @@
 import React from 'react'
+import { useState } from 'react'
 
 const CreateListing = () => {
+const [FormData, setFormData] = useState({});
+const [erros, seterros] = useState(null)
+const [imagePreviews, setImagePreviews] = useState([])
+
+const handleDeleteImage = (indexid) =>{
+  const confirmed = window.confirm("Are you sure you want to delete this image?");
+  
+  if (!confirmed) {
+    return; 
+  }
+  
+  const filteredImage = imagePreviews.filter((item,index)=>{
+      return index!== indexid
+  })
+  setImagePreviews(filteredImage);
+  
+  // Also update FormData
+  setFormData(prev => ({
+    ...prev,
+    imageFiles: prev.imageFiles.filter((_, index) => index !== indexid)
+  }));
+}
+
+const handleImageChange = (e) =>{
+  const imagefiles = e.target.files;
+  
+  if (!imagefiles || imagefiles.length === 0) {
+    seterros("Please select at least one image");
+    return;
+  }
+  
+  seterros(null);
+  
+  const filesArray = Array.from(imagefiles);
+  const allBase64Images = [];
+  
+
+  filesArray.forEach((file, index) => {
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      const base64Image = reader.result;
+      allBase64Images.push(base64Image);
+      
+
+      if (allBase64Images.length === filesArray.length) {
+        setImagePreviews(prev => [...prev, ...allBase64Images]);
+        setFormData(prev=>({
+          ...prev, 
+          imageFiles: [...(prev.imageFiles || []), ...allBase64Images]
+        }));
+        e.target.value = '';
+      }
+    };
+    
+    reader.onerror = () => {
+      seterros("Failed to read image file");
+    };
+    
+    reader.readAsDataURL(file);
+  });
+}
+
   return (
    <main className='max-w-4xl mx-auto'>
     <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
@@ -64,19 +128,53 @@ const CreateListing = () => {
   
   <div className='flex gap-2 p-1'>
     <input 
+    onChange={handleImageChange}
       type="file" 
       id='images' 
       accept='image/*'  
       multiple  
-      className='py-3 px-1 border w-[280px] border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition'
+      className=' ml-1 py-3 px-1 border w-[350px] border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition'
     />
-    <button 
-      type='button'
-      className='py-3 px-1 border-2 border-green-600 text-green-600 font-bold rounded-lg hover:bg-green-600 hover:text-white  mr-1 transition-colors whitespace-nowrap disabled:opacity-80'>
-      Upload
-    </button>
   </div>
-<button className='bg-green-600 p-4 md:p-3 md:w-[300px] m-1 rounded-full font-bold text-white text-xl '>Create Listing</button>
+  {imagePreviews.length > 0 && (
+    <div className="ml-1 mt-3">
+      <p className="text-sm text-gray-600 mb-2">
+        Selected images: {imagePreviews.length}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {imagePreviews.map((preview, index) => (
+          <div key={index} className="relative">
+            <img 
+              src={preview} 
+              alt={`Preview ${index + 1}`}
+              className="w-20 h-20 object-cover rounded border"
+            />
+            <button  
+              type='button' 
+              className='bg-red-700 my-1 p-2 rounded text-xl text-white hover:bg-red-800'
+              onClick={() => handleDeleteImage(index)}
+            >
+              Delete
+            </button>
+            {index === 0 && (
+              <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-xs text-center py-0.5">
+                Cover
+              </div>
+            )}
+            <div className="text-xs text-gray-500 text-center mt-1">
+              {index + 1}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  
+  {erros && (
+    <p className="text-red-500 text-sm ml-1 mt-2">{erros}</p>
+  )}
+  
+<button className='bg-green-600 p-4 md:p-3 md:w-[350px] m-1 rounded-full font-bold text-white text-xl '>Create Listing</button>
 </div>
     </form>
    </main>
