@@ -29,7 +29,7 @@ export const signin = async (req,res) => {
      return  res.status(500).json({message : "Failed to login the user", success : false})  
     }
     const token = jwt.sign({id :user._id},process.env.JWT_SECRET)
-     const {password:pass,...rest} = user._doc;
+   const {password:pass,...rest} = user._doc;
     res.cookie("access_token",token,{httpOnly : true})
    res.status(200).json({
   result: rest, 

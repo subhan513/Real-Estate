@@ -56,3 +56,20 @@ export const CreateListing = async (req, res, next) => {
     return res.status(500).json({message  : "Failed to  create te listing", success : false})
   }
 }
+
+
+export const deleteListing = async(req,res)=>{
+  const listing = await Listing.findById(req.params.id);
+  if(!listing){
+    return res.status(400).json({message : "Listing Not Found", success : false})
+  }
+  if (req.user.id !== listing.userRef.toString()) {
+    return res.status(401).json({message : "you  can only delete your own listings",success : false})
+  }
+ try {
+  await Listing.findByIdAndDelete(req.params.id)
+  res.status(201).json({message : "Listing has been deleted successfully"})
+ } catch (error) {
+  res.status(500).json({message : "Internal Server Error", success : false})
+ } 
+}
