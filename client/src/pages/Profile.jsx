@@ -246,10 +246,10 @@ const Profile = () => {
             <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
             <div className="flex flex-col">
               <Link>
-              <button className="text-green-700">EDIT</button>
+              <button className="text-green-700 font-bold">EDIT</button>
               </Link>
               <Link>
-              <button className="text-red-700">DELETE</button>
+              <button className="text-red-700 font-bold">DELETE</button>
               </Link>
 
             </div>
