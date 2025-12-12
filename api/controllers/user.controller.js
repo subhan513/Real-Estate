@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js"
+import Listing from "../models/listing.model.js";
 
 export const test = (req,res)=>{
   res.json({message : "APi is Working  Fine"})
@@ -90,5 +91,20 @@ export const logout = async (req,res) => {
      res.clearCookie('access_token').status(200).json({message : "User Logged Out Successfully", success : true})
   } catch (error) { 
     res.status(500).json({message : "Failed to logout the Account", success : false})  
+  }
+}
+
+export const getUserListings = async (req,res,next) =>{
+  if(req.user.id === req.params.id){
+    try {
+      const listings = await Listing.find({userRef : req.params.id})
+      res.status(200).json(listings)
+    } catch (error) {
+      next(error)
+    }
+
+  }
+  else {
+    return  res.status(400).json("Failed to get the All User Listings")
   }
 }
