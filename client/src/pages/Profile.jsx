@@ -11,6 +11,9 @@ const Profile = () => {
     email: currentUser.email || '',
     password: '',
   });
+  const [showError, setshowError] = useState(null)
+  const [UserListings, setUserListings] = useState([])
+  const [showUplaodListings, setshowUplaodListings] = useState(false)
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -120,6 +123,26 @@ const Profile = () => {
       dispatch(SignoutFailure(error.message))
    }
   }
+
+
+
+  const handleShowListings = async () =>{
+    try {
+    setshowUplaodListings(true)
+   setshowError(null)
+      const response  = await fetch(`/api/user/listings/${currentUser._id}`)
+      const data = await response.json();
+    if(data.message === false){
+    setshowError(data.message)
+    }
+    setUserListings(data)
+    setshowUplaodListings(false)
+    
+    } catch (error) {
+     setshowError(error.message)
+    }
+  }
+  console.log(UserListings);
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-4">Profile</h1>
@@ -201,6 +224,39 @@ const Profile = () => {
           Sign Out
         </button>
       </div>
+     <div className="flex items-center justify-center">
+      <button className="bg-blue-700 text-white text-lg rounded
+      w-fit p-3 hover:bg-green-700 cursor-pointer" onClick={handleShowListings}>Show Listings</button>
+     </div>
+     <p className='text-red-700 mt-5'>
+        {showError ? 'Error showing listings' : ''}
+      </p>
+    {UserListings && UserListings.length > 0 && (
+      <div>
+        <h1 className="text-red-800 text-xl font-semibold">Your Listings</h1>
+        {UserListings.map((listing)=>{
+           return <div
+           key={listing._id}
+           className="flex justify-between items-center gap-2"
+          >
+            <Link to={`/listing/${listing._id}`}>
+            <img src={listing.imageUrls[0]} alt="listing Cover"  
+             className="h-16 w-16 object-contain"
+            /></Link>
+            <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
+            <div className="flex flex-col">
+              <Link>
+              <button className="text-green-700">EDIT</button>
+              </Link>
+              <Link>
+              <button className="text-red-700">DELETE</button>
+              </Link>
+
+            </div>
+          </div>
+        })}
+      </div>
+    )}
     </div>
   );
 }

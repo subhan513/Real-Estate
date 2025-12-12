@@ -101,6 +101,7 @@ export const getUserListings = async (req,res,next) =>{
       res.status(200).json(listings)
     } catch (error) {
       next(error)
+      return res.status(500).json({message : "Failed To ge the All User Listings", success : false})
     }
 
   }
