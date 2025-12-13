@@ -13,6 +13,7 @@ export default function Search() {
     order : 'desc'
   })
 const location = useLocation();
+const [ShowMore,setShowMore] = useState();
   const handleChange = (e) =>{
     if(e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sale'){
       setsidebarData({...sidebarData,
@@ -89,6 +90,9 @@ const location = useLocation();
    const searchQuery = urlParams.toString()
    const response = await fetch(`/api/listing/get?${searchQuery}`)
    const listings = await response.json();
+   if(listings.length > 8){
+    setShowMore(true)
+   }
    setlistings(listings)
    setloading(false)
     }
@@ -216,6 +220,14 @@ const location = useLocation();
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
+            {ShowMore && (
+              <button
+              onClick={OnshowMoreClick}
+              className="text-green-700 hover:underline p-7 text-center w-full"
+              >
+              Show More
+              </button>
+            )}
         </div>
       </div>
     </div>
