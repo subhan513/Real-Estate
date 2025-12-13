@@ -93,13 +93,28 @@ const [ShowMore,setShowMore] = useState();
    if(listings.length > 8){
     setShowMore(true)
    }
+   else {
+    setShowMore(false)
+   }
    setlistings(listings)
    setloading(false)
     }
     fetchListings()
   }, [location.search])
 
-  
+  const OnshowMoreClick = async () =>{
+    const numberOfListings = listings.length;
+    const StartIndex = numberOfListings;
+    const urlParams =  new URLSearchParams(location.search)
+    urlParams.set('startIndex',StartIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get/${searchQuery}`)
+    const data = await res.json();
+    if (data.length < 9) {
+      setShowMore(false)
+    }
+    setlistings({...listings,...data})
+  }  
   return (
     <div className='flex flex-col md:flex-row'>
       <div className='p-7  border-b-2 md:border-r-2 md:min-h-screen'>
