@@ -262,7 +262,7 @@ try {
             /></Link>
             <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
             <div className="flex flex-col">
-              <Link>
+              <Link to={`/update-listing/${listing._id}`}>
               <button className="text-green-700 font-bold">EDIT</button>
               </Link>
               <Link>

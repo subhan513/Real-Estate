@@ -73,3 +73,38 @@ export const deleteListing = async(req,res)=>{
   res.status(500).json({message : "Internal Server Error", success : false})
  } 
 }
+
+
+export const updateListing = async (req,res) =>{
+   const listing = await Listing.findById(req.params.id);
+  if(!listing){
+    return res.status(400).json({message : "Listing Not Found", success : false})
+  }
+  if (req.user.id !== listing.userRef.toString()) {
+    return res.status(401).json({message : "you  can only dedit your own listings",success : false})
+  }
+  try {
+    await Listing.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new : true}
+    )
+     res.status(200).json(listing);
+  } catch (error) {
+    res.status(500).json({message : "Failed to delete the listing"})
+  }
+
+}
+
+
+export const getListing = async (req,res) =>{
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if(!listing){
+      return  res.status(404).json({message : "Listing not found"})
+    }
+    res.status(200).json(listing)
+  } catch (error) {
+   res.status(500).json({message : "Internal Server error"}) 
+  }
+}
