@@ -258,9 +258,9 @@ try {
           >
             <Link to={`/listing/${listing._id}`}>
             <img src={listing.imageUrls[0]} alt="listing Cover"  
-             className="h-16 w-16 object-contain"
+             className="h-18 w-18 object-contain text-center"
             /></Link>
-            <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
+            <Link className="line-clamp-4" to={`/listing/${listing._id}`}>{listing.name}</Link>
             <div className="flex flex-col">
               <Link to={`/update-listing/${listing._id}`}>
               <button className="text-green-700 font-bold">EDIT</button>
