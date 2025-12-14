@@ -10,12 +10,30 @@ import cors from "cors";
 dotenv.config();
 
 // Connect to MongoDB
-if (process.env.MONGO) {
-  mongoose.connect(process.env.MONGO).then(()=>{
-    console.log("Connected to the Database");
-  }).catch((err)=>{
-    console.log("Failed connect with Database",err);
-  })
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    return;
+  }
+  
+  if (process.env.MONGO) {
+    try {
+      await mongoose.connect(process.env.MONGO, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      isConnected = true;
+      console.log("Connected to the Database");
+    } catch (err) {
+      console.log("Failed connect with Database", err);
+      isConnected = false;
+    }
+  }
+};
+
+// Initialize connection for serverless
+if (process.env.VERCEL) {
+  connectDB();
 }
 
 const app = express();
@@ -34,15 +52,24 @@ app.use('/api/auth',authRoutes)
 app.use('/api/listing',ListingRouter)
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  await connectDB();
   res.json({ status: 'ok' });
 });
 
-// Export for Vercel serverless
+// Middleware to ensure DB connection for all routes
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// Export Express app for Vercel
+// Vercel will automatically handle the Express app
 export default app;
 
 // For local development
 if (process.env.NODE_ENV !== 'production') {
+  connectDB();
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
