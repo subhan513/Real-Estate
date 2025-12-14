@@ -24,6 +24,10 @@ app.use('/api/user',userRoutes)
 app.use('/api/auth',authRoutes)
 app.use('/api/listing',ListingRouter)
 
+app.get('/api/health',(req,res)=>{
+   res.send({success : "true"})
+})
+
 
 
 
