@@ -21,7 +21,9 @@ app.use(express.json({ limit: '5mb' }));
 app.use('/api/user',userRoutes)
 app.use('/api/auth',authRoutes)
 app.use('/api/listing',ListingRouter)
-
+app.get('/api/test',(req,res)=>{
+  res.json({message : "APi is Working  Fine"})
+});
 app.listen(3000,()=>{
   console.log("Server is listening on the port 3000");
 })
