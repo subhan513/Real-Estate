@@ -32,7 +32,7 @@ const app = express();
 
 app.use(
   cors({
-    origin : "https://real-estate-cqub.vercel.app/",
+    origin : "https://real-estate-cqub.vercel.app",
     methods : ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
     allowedHeaders : ["Content-Type","Authorization"],
     Credentials : true,
@@ -58,22 +58,4 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message
-  });
-});
-// Vercel ke liye specific handling
-if (process.env.NODE_ENV === 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT} in production mode`);
-  });
-}
 export default app;
