@@ -108,7 +108,7 @@ const [ShowMore,setShowMore] = useState();
     const urlParams =  new URLSearchParams(location.search)
     urlParams.set('startIndex',StartIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/listing/get/${searchQuery}`)
+    const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get/${searchQuery}`)
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false)
