@@ -88,7 +88,7 @@ const [ShowMore,setShowMore] = useState();
   const fetchListings = async () => {
    setloading(true);
    const searchQuery = urlParams.toString()
-   const response = await fetch(`/api/listing/get?${searchQuery}`)
+   const response = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get?${searchQuery}`)
    const listings = await response.json();
    if(listings.length > 8){
     setShowMore(true)

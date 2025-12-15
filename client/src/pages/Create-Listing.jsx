@@ -118,7 +118,7 @@ try {
     return seterror("Discount Price must be lower than te regular price")  
   }
     setloading(true)
-  const response = await fetch('/api/listing/create',{
+  const response = await fetch('https://real-estate-tau-orpin.vercel.app/listing/create',{
     method : "POST",
     headers : {
       'Content-Type' : 'application/json'

@@ -5,13 +5,4 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://real-estate-tau-orpin.vercel.app/",
-        secure: false,
-        changeOrigin: true,
-      },
-    },
-  },
 });

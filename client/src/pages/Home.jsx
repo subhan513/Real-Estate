@@ -21,7 +21,7 @@ useEffect(() => {
   const fetchOfferListings = async () =>{
     try {
       // FIX 1: Add 'await' here
-      const res = await fetch(`/api/listing/get?offer=true&limit=4`);
+      const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get?offer=true&limit=4`);
       const data = await res.json();
       setofferlistings(data)
       await fetchRentListings();
@@ -31,7 +31,7 @@ useEffect(() => {
   } 
   const fetchRentListings = async () =>{
     try {
-      const res  = await fetch(`/api/listing/get?type=rent&limit=4`);
+      const res  = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get?type=rent&limit=4`);
       const data = await res.json();
       setrentlisting(data)
       fetchSaleListings();
@@ -41,7 +41,7 @@ useEffect(() => {
   }
   const fetchSaleListings = async () =>{
 try {
-  const res = await fetch(`/api/listing/get?type=sale&limit=4`);
+  const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get?type=sale&limit=4`);
   const data = await res.json();
   setsaleListing(data)
 } catch (error) {

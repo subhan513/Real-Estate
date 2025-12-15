@@ -33,7 +33,7 @@ const [loading, setloading] = useState(false)
 useEffect(() => {
   const fetchListing = async () => {
     const listingId = params.id;
-    const res = await fetch(`/api/listing/get/${listingId}`) 
+    const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get/${listingId}`) 
     const data = await res.json();
     if (data.message === false) {
       console.log(data.message);
@@ -142,7 +142,7 @@ try {
     return seterror("Discount Price must be lower than te regular price")  
   }
     setloading(true)
-  const response = await fetch(`/api/listing/update/${params.id}`,{
+  const response = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/update/${params.id}`,{
     method : "POST",
     headers : {
       'Content-Type' : 'application/json'

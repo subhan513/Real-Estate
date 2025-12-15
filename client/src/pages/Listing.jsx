@@ -32,7 +32,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/listing/get/${params.id}`);
+        const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get/${params.id}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);
