@@ -32,7 +32,7 @@ const app = express();
 
 app.use(
   cors({
-    origin : "*",
+    origin : "https://real-estate-cqub.vercel.app/",
     methods : ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
     allowedHeaders : ["Content-Type","Authorization"],
     Credentials : true,
