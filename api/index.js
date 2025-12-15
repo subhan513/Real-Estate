@@ -30,14 +30,15 @@ connectDB();
 
 const app = express();
 
+// CORS configuration - FIXED: credentials should be lowercase
 app.use(
   cors({
-    origin : "https://real-estate-cqub.vercel.app",
-    methods : ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
-    allowedHeaders : ["Content-Type","Authorization"],
-    Credentials : true,
+    origin: "https://real-estate-cqub.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // <-- Fixed: lowercase 'c'
   })
-)
+);
 
 // Cookie parser
 app.use(cookieParser());
@@ -46,9 +47,18 @@ app.use(cookieParser());
 app.use(express.json({ limit: '5mb' }));
 
 // API Routes
-app.use('/api/user', userRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/listing', ListingRouter);
+app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/listing', ListingRouter);
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'Real Estate API',
+    status: 'running',
+    docs: '/api-docs' // If you have API docs
+  });
+});
 
 // Health check endpoint for Vercel
 app.get('/health', (req, res) => {
@@ -58,4 +68,24 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Error handling middleware (add this at the end)
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});
+
+// Start server only if not in Vercel environment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+}
+
 export default app;
