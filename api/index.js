@@ -3,9 +3,13 @@ import mongoose  from "mongoose";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js"
 import ListingRouter from "./routes/listing.route.js"
+import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
+
+
+const PORT = process.env.PORT
 
 mongoose.connect(process.env.MONGO).then(()=>{
   console.log("Connected to the Database");
@@ -29,7 +33,7 @@ app.use(express.json({ limit: '5mb' }));
 app.use('/api/user',userRoutes)
 app.use('/api/auth',authRoutes)
 app.use('/api/listing',ListingRouter)
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
   console.log("Server is listening on the port 3000");
 })
 
