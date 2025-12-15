@@ -10,7 +10,7 @@ const Contact = ({ listing }) => {
   useEffect(() => {
     const fetchLandLord = async () => {
       try {
-        const res = await fetch(`/api/user/${listing.userRef}`)
+        const res = await fetch(`https://real-estate-tau-orpin.vercel.app/user/${listing.userRef}`)
         const data = await res.json();
         setlandloardData(data)
       } catch (error) {
