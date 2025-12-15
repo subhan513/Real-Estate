@@ -9,58 +9,50 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 
-// Vercel ke liye PORT configuration
-const PORT = process.env.PORT || 3000;
+const app = express();
 
-// MongoDB connection with better error handling
+// ✅ Fixed: Async DB connection for Vercel serverless
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected) {
+    console.log("✅ Using existing MongoDB connection");
+    return;
+  }
+
   try {
     await mongoose.connect(process.env.MONGO, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s
+      socketTimeoutMS: 45000, // Close sockets after 45s
     });
+    isConnected = true;
     console.log("✅ Connected to MongoDB");
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
-    process.exit(1);
+    console.error("❌ MongoDB connection error:", error.message);
+    // Don't exit process in serverless
+    throw error;
   }
 };
 
-connectDB();
-
-const app = express();
-
-// CORS configuration - FIXED: credentials should be lowercase
+// ✅ CORS configuration - Fixed typo
 app.use(
   cors({
     origin: "https://real-estate-cqub.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // <-- Fixed: lowercase 'c'
+    credentials: true, // lowercase
   })
 );
 
-// Cookie parser
+// ✅ Cookie parser
 app.use(cookieParser());
 
-// Body parser
+// ✅ Body parser
 app.use(express.json({ limit: '5mb' }));
 
-// API Routes
-app.use('/user', userRoutes);
-app.use('/auth', authRoutes);
-app.use('/listing', ListingRouter);
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    message: 'Real Estate API',
-    status: 'running',
-    docs: '/api-docs' // If you have API docs
-  });
-});
-
-// Health check endpoint for Vercel
+// ✅ Health check endpoint (without DB connection)
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
@@ -69,23 +61,53 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Error handling middleware (add this at the end)
+// ✅ Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'Real Estate API',
+    status: 'running'
+  });
+});
+
+// ✅ Middleware to ensure DB connection before API routes
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// ✅ API Routes
+app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/listing', ListingRouter);
+
+// ✅ 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
+
+// ✅ Error handling middleware
 app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
   
   res.status(statusCode).json({
     success: false,
     statusCode,
-    message,
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : message,
   });
 });
 
-// Start server only if not in Vercel environment
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-}
-
+// ✅ Export for Vercel serverless
 export default app;
