@@ -16,6 +16,14 @@ mongoose.connect(process.env.MONGO).then(()=>{
 
 
 const app = express();
+app.use(
+  cors({
+    origin : "*",
+    methods : ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
+    allowedHeaders : ["Content-Type","Authorization"],
+    Credentials : true,
+  })
+)
 app.use(cookieParser());
 app.use(express.json({ limit: '5mb' }));
 app.use('/api/user',userRoutes)
