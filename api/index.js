@@ -11,10 +11,10 @@ dotenv.config();
 
 mongoose.connect(process.env.MONGO)
   .then(() => {
-    console.log("✅ Connected to the Database");
+    console.log("Connected to the Database");
   })
   .catch((err) => {
-    console.log("❌ Failed to connect with Database", err);
+    console.log("Failed to connect with Database", err);
     process.exit(1);
   });
 
