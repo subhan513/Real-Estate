@@ -148,6 +148,7 @@ try {
     setloading(true)
   const response = await fetch(`${VITE_API_URL}/api/listing/update/${params.id}`,{
     method : "POST",
+    credentials : "include",
     headers : {
       'Content-Type' : 'application/json'
     },
