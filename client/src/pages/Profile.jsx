@@ -4,11 +4,15 @@ import { signInSuccess, signInFailure, deleteFailure,deleteSuccess,deleteStart,S
 import { useRef, useState } from "react";
 
 const Profile = () => {
-
-   const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef();
-  const [formData, setFormData] = useState({});
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
+  const [formData, setFormData] = useState({
+    username: currentUser.username || '',
+    email: currentUser.email || '',
+    password: '',
+  });
   const [showError, setshowError] = useState(null)
   const [UserListings, setUserListings] = useState([])
   const [showUplaodListings, setshowUplaodListings] = useState(false)
@@ -96,7 +100,7 @@ const Profile = () => {
     try {
       dispatch(deleteStart())
       const DeleteUserApiResponse = await fetch(`${VITE_API_URL}/api/user/delete/${currentUser._id}`,{
-      method : "DELETE",
+      method : "DELETE", 
       headers : {
         "Content-Type" : "application/json"
       }
@@ -197,7 +201,7 @@ try {
           type="text" 
           id="username" 
           placeholder="Username" 
-          value={currentUser.username}
+          value={formData.username}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
           required
@@ -207,7 +211,7 @@ try {
           type="email" 
           id="email" 
           placeholder="Email" 
-          value={currentUser.email}
+          value={formData.email}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
           required
@@ -216,7 +220,7 @@ try {
           type="password" 
           id="password" 
           placeholder="New Password (leave empty to keep current)" 
-          value={currentUser.password}
+          value={formData.password}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
         />

@@ -4,7 +4,7 @@ import {useSelector} from "react-redux"
 import {useNavigate} from "react-router-dom"
 
 const CreateListing = () => {
-   const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const {currentUser} = useSelector((state)=>state.user)
   const navigate = useNavigate();
 const [FormData, setFormData] = useState({
@@ -126,11 +126,10 @@ try {
     },
     body : JSON.stringify({
       ...FormData,
-      userRef : currentUser?._id
+      userRef : currentUser._id
     })
   })
   const data = await response.json();
-  console.log(data);
  if(data.success === false){
   seterror(data.message)
  }
