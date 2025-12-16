@@ -8,11 +8,7 @@ const Profile = () => {
    const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef();
-  const [formData, setFormData] = useState({
-    username: currentUser.username || '',
-    email: currentUser.email || '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({});
   const [showError, setshowError] = useState(null)
   const [UserListings, setUserListings] = useState([])
   const [showUplaodListings, setshowUplaodListings] = useState(false)
