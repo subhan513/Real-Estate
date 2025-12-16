@@ -126,7 +126,7 @@ try {
     },
     body : JSON.stringify({
       ...FormData,
-      userRef : currentUser._id
+      userRef : currentUser?._id
     })
   })
   const data = await response.json();
