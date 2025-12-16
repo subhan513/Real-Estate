@@ -23,7 +23,7 @@ const app = express();
 // CORS
 app.use(cors({
   origin: [
-    "https://real-estate-cqub.vercel.app",
+    "https://real-estate-mlx5.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000",
   ],
