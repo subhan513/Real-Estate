@@ -18,26 +18,47 @@ export const signup = async (req,res) => {
 }
 
 export const signin = async (req,res) => {
-   try {
-    const {email,password} = req.body;
-    const user = await User.findOne({email : email})
-    if(!user){
-        return res.status(400).json({message : "User not Found" , success : false})
-    }
-    const VerifyPassword = bcrypt.compareSync(password,user.password)
-    if(!VerifyPassword){
-     return  res.status(500).json({message : "Failed to login the user", success : false})  
-    }
-    const token = jwt.sign({id :user._id},process.env.JWT_SECRET)
-   const {password:pass,...rest} = user._doc;
-    res.cookie("access_token",token,{httpOnly : true})
-   res.status(200).json({
-  result: rest, 
-  success: true
-});
-   } catch (error) {
-    res.status(500).json({Message : "Failed to logged in user", success : false})
+  try {
+   const {email,password} = req.body;
+   const user = await User.findOne({email : email})
+   
+   if(!user){
+       return res.status(400).json({message : "User not Found" , success : false})
    }
+   
+   const VerifyPassword = bcrypt.compareSync(password,user.password)
+   if(!VerifyPassword){
+    return  res.status(400).json({message : "Invalid credentials", success : false})  
+   }
+   
+   const token = jwt.sign({id :user._id},process.env.JWT_SECRET)
+   const {password:pass,...rest} = user._doc;
+   
+   // ✅ FIXED COOKIE SETTINGS FOR PRODUCTION
+   const isProduction = process.env.NODE_ENV === 'production';
+   
+   res.cookie("access_token",token,{
+     httpOnly : true,
+     secure: isProduction,
+     sameSite: isProduction ? 'none' : 'lax',
+     maxAge: 30 * 24 * 60 * 60 * 1000,
+     path: '/'
+   });
+   
+   // ✅ Return success response with user data
+   res.status(200).json({
+     success: true,
+     user: rest,
+     token: token
+   });
+   
+  } catch (error) {
+   console.error('Signin error:', error);
+   res.status(500).json({
+     success: false,
+     message: "Failed to login"
+   });
+  }
 }
 
 
@@ -45,16 +66,30 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     
+    // ✅ Determine if we're in production
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-
+      
       const userObj = user._doc || user;
       const { password: pass, ...rest } = userObj;
       
-      res
-        .cookie('access_token', token, { httpOnly: true })
-        .status(200)
-        .json(rest);
+      // ✅ FIXED COOKIE SETTINGS FOR PRODUCTION
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        secure: isProduction, // true for HTTPS (production)
+        sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-site in production
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/'
+      });
+      
+      res.status(200).json({
+        success: true,
+        user: rest,
+        token: token // Also send token in response
+      });
+      
     } else {
       const generatePassword = 
         Math.random().toString(36).slice(-8) + 
@@ -80,12 +115,26 @@ export const google = async (req, res, next) => {
       const newUserObj = newUser._doc || newUser;
       const { password: pass, ...rest } = newUserObj;
       
-      res
-        .cookie('access_token', token, { httpOnly: true })
-        .status(200)
-        .json(rest);
+      // ✅ FIXED COOKIE SETTINGS FOR PRODUCTION
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        secure: isProduction, // true for HTTPS (production)
+        sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-site in production
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/'
+      });
+      
+      res.status(200).json({
+        success: true,
+        user: rest,
+        token: token // Also send token in response
+      });
     }
   } catch (error) {
-    next(error);
+    console.error('Google auth error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Google authentication failed'
+    });
   }
 };
