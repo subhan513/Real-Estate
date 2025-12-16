@@ -1,14 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
-import { 
-  signInSuccess, 
-  signInFailure, 
-  deleteFailure,
-  deleteSuccess,
-  deleteStart,
-  signoutFailure,
-  signoutStart,
-  signoutSuccess
+import { signInStart, signInSuccess, signInFailure,deleteFailure,deleteStart,deleteSuccess,SignoutFailure,SignoutSuccess, SignoutStart
 } from "../redux/user/userSlice.js";
 import { useRef, useState } from "react";
 
@@ -159,7 +151,7 @@ const Profile = () => {
 
   const handleSignOutClick = async () => {
     try {
-      dispatch(signoutStart());
+      dispatch(SignoutStart());
       
       const Response = await fetch(`${VITE_API_URL}/api/user/logout`, {
         method: "POST",
@@ -169,17 +161,17 @@ const Profile = () => {
       const data = await Response.json();
       
       if (data.success === false) {
-        dispatch(signoutFailure(data.message));
+        dispatch(SignoutFailure(data.message));
         return;
       }
       
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      dispatch(signoutSuccess());
+      dispatch(SignoutSuccess());
       window.location.href = '/';
       
     } catch (error) {
-      dispatch(signoutFailure(error.message));
+      dispatch(SignoutFailure(error.message));
     }
   };
 
