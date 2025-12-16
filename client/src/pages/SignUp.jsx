@@ -17,7 +17,7 @@ const handleSubmit = async (e) => {
   
   try {
     setloading(true)
-    const response = await fetch('https://real-estate-tau-orpin.vercel.app/auth/signup', { // ← YAHI CHANGE KARO
+    const response = await fetch('/api/auth/signup', { // ← YAHI CHANGE KARO
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

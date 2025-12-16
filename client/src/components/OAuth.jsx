@@ -15,7 +15,7 @@ const OAuth = () => {
       
       console.log('Firebase Auth Success:', result.user);
 
-      const res = await fetch('https://real-estate-tau-orpin.vercel.app/auth/google', {
+      const res = await fetch('/api/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

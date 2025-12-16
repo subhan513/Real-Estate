@@ -1,99 +1,26 @@
 import express from "express";
-import mongoose from "mongoose";
+import mongoose  from "mongoose";
 import userRoutes from "./routes/user.route.js";
-import authRoutes from "./routes/auth.route.js";
-import ListingRouter from "./routes/listing.route.js";
-import cors from "cors";
+import authRoutes from "./routes/auth.route.js"
+import ListingRouter from "./routes/listing.route.js"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-
 dotenv.config();
 
-// Vercel ke liye PORT configuration
-const PORT = process.env.PORT || 3000;
-
-// MongoDB connection with better error handling
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("✅ Connected to MongoDB");
-  } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
-    process.exit(1);
-  }
-};
-
-connectDB();
+mongoose.connect(process.env.MONGO).then(()=>{
+  console.log("Connected to the Database");
+  
+}).catch((err)=>{
+  console.log("Failed connnect with Database",err);
+})
 
 const app = express();
-
-// CORS configuration
-app.use(
-  cors({
-    origin: "https://real-estate-cqub.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
-
-// Cookie parser
 app.use(cookieParser());
-
-// Body parser
 app.use(express.json({ limit: '5mb' }));
+app.use('/api/user',userRoutes)
+app.use('/api/auth',authRoutes)
+app.use('/api/listing',ListingRouter)
 
-// API Routes
-app.use('/user', userRoutes);
-app.use('/auth', authRoutes);
-app.use('/listing', ListingRouter);
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    message: 'Real Estate API',
-    status: 'running',
-    docs: '/api-docs'
-  });
-});
-
-// Health check endpoint for Vercel
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    message: 'Server is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// FIX: Add a proper 404 handler instead of using '*'
-app.use('*', (req, res, next) => {
-  res.status(404).json({
-    success: false,
-    message: `Route not found: ${req.originalUrl}`,
-  });
-});
-
-// Error handling middleware (add this at the end)
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
-
-// Start server only if not in Vercel environment
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-}
-
-export default app;
+app.listen(3000,()=>{
+  console.log("Server is listening on the port 3000");
+})
