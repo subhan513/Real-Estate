@@ -40,7 +40,7 @@ const OAuth = () => {
       const data = await res.json();
       console.log('Backend Data:', data);
       
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess(data.user));
       navigate('/')
     } catch (error) {
       console.log("Could not sign in with Google:", error.message);
