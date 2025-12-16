@@ -121,9 +121,11 @@ try {
     setloading(true)
   const response = await fetch(`${VITE_API_URL}/api/listing/create`,{
     method : "POST",
+    credentials : "include",
     headers : {
       'Content-Type' : 'application/json'
     },
+
     body : JSON.stringify({
       ...FormData,
       userRef : currentUser._id
