@@ -134,7 +134,9 @@ const Profile = () => {
     try {
     setshowUplaodListings(true)
    setshowError(null)
-      const response  = await fetch(`${VITE_API_URL}/api/user/listings/${currentUser._id}`)
+      const response  = await fetch(`${VITE_API_URL}/api/user/listings/${currentUser._id}`,{
+        credentials : "include"
+      })
       const data = await response.json();
     if(data.message === false){
     setshowError(data.message)
