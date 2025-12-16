@@ -21,7 +21,7 @@ useEffect(() => {
   const fetchOfferListings = async () =>{
     try {
       // FIX 1: Add 'await' here
-      const res = await fetch(`https://real-estate-tau-orpin.vercel.app/listing/get?offer=true&limit=4`);
+      const res = await fetch(`/api/listing/get?offer=true&limit=4`);
       const data = await res.json();
       setofferlistings(data)
       await fetchRentListings();
