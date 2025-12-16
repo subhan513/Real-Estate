@@ -31,7 +31,7 @@ const handleSubmit = async (e) => {
     const data = await response.json(); 
      
     if (data.success === true) { 
-      dispatch(signInSuccess(data))
+      dispatch(signInSuccess(data.user))
       navigate('/')
     } else {
       dispatch(signInFailure(data.message || "Sign in failed"))
