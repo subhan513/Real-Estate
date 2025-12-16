@@ -66,6 +66,7 @@ const Profile = () => {
 
       const ProfileApiResponse = await fetch(`${VITE_API_URL}/api/user/update/${id}`, {
         method: "POST",
+        credentials : "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -150,7 +151,8 @@ const Profile = () => {
   const handleDeleteListing = async (listingID) =>{
 try {
   const response = await fetch(`${VITE_API_URL}/api/listing/listings/${listingID}`,{
-    method : "DELETE"
+    method : "DELETE",
+    credentials : "include"
   })
   const data  = await response.json();
   if(data.message === false){
