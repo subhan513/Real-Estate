@@ -101,9 +101,10 @@ const Profile = () => {
       dispatch(deleteStart())
       const DeleteUserApiResponse = await fetch(`${VITE_API_URL}/api/user/delete/${currentUser._id}`,{
       method : "DELETE", 
+      credentials : "include",
       headers : {
         "Content-Type" : "application/json"
-      }
+      },
     })
     dispatch(deleteSuccess(DeleteUserApiResponse.message))
     } catch (error) {
