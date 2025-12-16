@@ -4,6 +4,7 @@ import {useSelector} from "react-redux"
 import {useNavigate} from "react-router-dom"
 
 const CreateListing = () => {
+   const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const {currentUser} = useSelector((state)=>state.user)
   const navigate = useNavigate();
 const [FormData, setFormData] = useState({
@@ -118,7 +119,7 @@ try {
     return seterror("Discount Price must be lower than te regular price")  
   }
     setloading(true)
-  const response = await fetch(`/api/listing/create`,{
+  const response = await fetch(`${VITE_API_URL}/api/listing/create`,{
     method : "POST",
     headers : {
       'Content-Type' : 'application/json'

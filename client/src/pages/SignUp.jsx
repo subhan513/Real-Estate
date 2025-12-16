@@ -3,6 +3,8 @@ import {Link,useNavigate} from "react-router-dom"
 import { useState } from 'react';
 import OAuth from '../components/OAuth';
 const SignUp = () => {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const [formData, setformData] = useState({})
   const [error, seterror] = useState(null)
   const [loading, setloading] = useState(false)
@@ -17,7 +19,7 @@ const handleSubmit = async (e) => {
   
   try {
     setloading(true)
-    const response = await fetch('/api/auth/signup', { // ← YAHI CHANGE KARO
+    const response = await fetch(`${VITE_API_URL}/api/auth/signup`, { // ← YAHI CHANGE KARO
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

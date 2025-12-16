@@ -3,6 +3,8 @@ import { useState } from "react";
 import {useNavigate,useLocation} from "react-router-dom"
 import ListingItem from "../components/ListingItem";
 export default function Search() {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const [sidebarData, setsidebarData] = useState({
     searchTerm : '',
     type : 'all',
@@ -88,7 +90,7 @@ const [ShowMore,setShowMore] = useState();
   const fetchListings = async () => {
    setloading(true);
    const searchQuery = urlParams.toString()
-   const response = await fetch(`/api/listing/get?${searchQuery}`)
+   const response = await fetch(`${VITE_API_URL}/api/listing/get?${searchQuery}`)
    const listings = await response.json();
    if(listings.length > 8){
     setShowMore(true)
@@ -108,7 +110,7 @@ const [ShowMore,setShowMore] = useState();
     const urlParams =  new URLSearchParams(location.search)
     urlParams.set('startIndex',StartIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/listing/get/${searchQuery}`)
+    const res = await fetch(`${VITE_API_URL}/api/listing/get/${searchQuery}`)
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false)

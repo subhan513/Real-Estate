@@ -4,6 +4,8 @@ import { signInSuccess, signInFailure, deleteFailure,deleteSuccess,deleteStart,S
 import { useRef, useState } from "react";
 
 const Profile = () => {
+
+   const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef();
   const [formData, setFormData] = useState({
@@ -62,7 +64,7 @@ const Profile = () => {
         delete updateData.password;
       }
 
-      const ProfileApiResponse = await fetch(`/api/user/update/${id}`, {
+      const ProfileApiResponse = await fetch(`${VITE_API_URL}/api/user/update/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +99,7 @@ const Profile = () => {
   const handleDeleteUser = async () =>{
     try {
       dispatch(deleteStart())
-      const DeleteUserApiResponse = await fetch(`/api/user/delete/${currentUser._id}`,{
+      const DeleteUserApiResponse = await fetch(`${VITE_API_URL}/api/user/delete/${currentUser._id}`,{
       method : "DELETE",
       headers : {
         "Content-Type" : "application/json"
@@ -112,7 +114,7 @@ const Profile = () => {
   const handleSignOutClick = async () =>{
    try {
    dispatch(SignoutStart())
-    const Response = await fetch('/api/user/logout')
+    const Response = await fetch('${VITE_API_URL}/api/user/logout')
      const data = await Response.json();
      if(data.success === false){
       dispatch(SignoutFailure(data.message))
@@ -130,7 +132,7 @@ const Profile = () => {
     try {
     setshowUplaodListings(true)
    setshowError(null)
-      const response  = await fetch(`/api/user/listings/${currentUser._id}`)
+      const response  = await fetch(`${VITE_API_URL}/api/user/listings/${currentUser._id}`)
       const data = await response.json();
     if(data.message === false){
     setshowError(data.message)
@@ -146,7 +148,7 @@ const Profile = () => {
 
   const handleDeleteListing = async (listingID) =>{
 try {
-  const response = await fetch(`/api/listing/listings/${listingID}`,{
+  const response = await fetch(`${VITE_API_URL}/api/listing/listings/${listingID}`,{
     method : "DELETE"
   })
   const data  = await response.json();

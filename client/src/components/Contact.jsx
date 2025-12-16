@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react'
 // import {Link} from "react-router-dom" 
 
 const Contact = ({ listing }) => {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const [landloardData, setlandloardData] = useState(null)
   const [message, setmessage] = useState('') // Change from null to empty string
 
   useEffect(() => {
     const fetchLandLord = async () => {
       try {
-        const res = await fetch(`/api/user/${listing.userRef}`)
+        const res = await fetch(`${VITE_API_URL}/api/user/${listing.userRef}`)
         const data = await res.json();
         setlandloardData(data)
       } catch (error) {

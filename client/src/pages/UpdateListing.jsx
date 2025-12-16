@@ -5,6 +5,8 @@ import {useNavigate} from "react-router-dom"
 import { useParams } from 'react-router-dom'
 
 const UpdateListing = () => {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const {currentUser} = useSelector((state)=>state.user)
   const navigate = useNavigate();
   const params = useParams();
@@ -33,7 +35,7 @@ const [loading, setloading] = useState(false)
 useEffect(() => {
   const fetchListing = async () => {
     const listingId = params.id;
-    const res = await fetch(`/api/listing/get/${listingId}`) 
+    const res = await fetch(`${VITE_API_URL}/api/listing/get/${listingId}`) 
     const data = await res.json();
     if (data.message === false) {
       console.log(data.message);
@@ -142,7 +144,7 @@ try {
     return seterror("Discount Price must be lower than te regular price")  
   }
     setloading(true)
-  const response = await fetch(`/api/listing/update/${params.id}`,{
+  const response = await fetch(`${VITE_API_URL}/api/listing/update/${params.id}`,{
     method : "POST",
     headers : {
       'Content-Type' : 'application/json'

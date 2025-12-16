@@ -5,6 +5,8 @@ import {useDispatch,useSelector} from "react-redux";
 import {signInStart,signInSuccess,signInFailure} from "../redux/user/userSlice.js"
 import OAuth from '../components/OAuth.jsx';
 const SignIn = () => {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const [formData, setformData] = useState({})
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -17,7 +19,7 @@ const handleSubmit = async (e) => {
   
   try {
     dispatch(signInStart())
-    const response = await fetch('/api/auth/signin', { 
+    const response = await fetch(`${VITE_API_URL}/api/auth/signin`, { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

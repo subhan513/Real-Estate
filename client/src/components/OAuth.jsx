@@ -4,6 +4,8 @@ import {signInSuccess} from "../redux/user/userSlice.js"
 import {useNavigate} from "react-router-dom"
 import { app } from "../firebase";
 const OAuth = () => {
+
+  const VITE_API_URL ="https://real-estate-eight-snowy.vercel.app"
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
@@ -15,7 +17,7 @@ const OAuth = () => {
       
       console.log('Firebase Auth Success:', result.user);
 
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch(`${VITE_API_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
