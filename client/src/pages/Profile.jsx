@@ -57,7 +57,7 @@ const Profile = () => {
       setError(null);
       setSuccess(false);
 
-      const id = currentUser?._id;
+      const id = currentUser._id;
       
       const updateData = { ...formData };
       if (!updateData.password.trim()) {
@@ -99,12 +99,11 @@ const Profile = () => {
   const handleDeleteUser = async () =>{
     try {
       dispatch(deleteStart())
-      const DeleteUserApiResponse = await fetch(`${VITE_API_URL}/api/user/delete/${currentUser?._id}`,{
+      const DeleteUserApiResponse = await fetch(`${VITE_API_URL}/api/user/delete/${currentUser._id}`,{
       method : "DELETE",
       headers : {
         "Content-Type" : "application/json"
-      },
-      credentials: "include",
+      }
     })
     dispatch(deleteSuccess(DeleteUserApiResponse.message))
     } catch (error) {
@@ -115,7 +114,7 @@ const Profile = () => {
   const handleSignOutClick = async () =>{
    try {
    dispatch(SignoutStart())
-    const Response = await fetch('${VITE_API_URL}/api/user/logout')
+    const Response = await fetch(`${VITE_API_URL}/api/user/logout`)
      const data = await Response.json();
      if(data.success === false){
       dispatch(SignoutFailure(data.message))
@@ -133,7 +132,7 @@ const Profile = () => {
     try {
     setshowUplaodListings(true)
    setshowError(null)
-      const response  = await fetch(`${VITE_API_URL}/api/user/listings/${currentUser?._id}`)
+      const response  = await fetch(`${VITE_API_URL}/api/user/listings/${currentUser._id}`)
       const data = await response.json();
     if(data.message === false){
     setshowError(data.message)
