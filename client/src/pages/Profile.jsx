@@ -197,7 +197,7 @@ try {
           type="text" 
           id="username" 
           placeholder="Username" 
-          value={formData.username}
+          value={currentUser.username}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
           required
@@ -207,7 +207,7 @@ try {
           type="email" 
           id="email" 
           placeholder="Email" 
-          value={formData.email}
+          value={currentUser.email}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
           required
@@ -216,7 +216,7 @@ try {
           type="password" 
           id="password" 
           placeholder="New Password (leave empty to keep current)" 
-          value={formData.password}
+          value={currentUser.password}
           className='p-3 border rounded my-2' 
           onChange={handleChange}
         />
